@@ -15,7 +15,7 @@ const Dashboard = async () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-4xl mx-auto mt-6">
+      <div className="max-w-4xl mx-auto mt-4">
         <GuessWhoWillWin
           userId={userId}
           locations={locations.map((location) => ({
