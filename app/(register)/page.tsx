@@ -36,7 +36,7 @@ const Signup = () => {
 
   return (
     <>
-      <div className="max-w-sm mx-auto mt-10 p-6 bg-white rounded-lg shadow-2xl">
+      <div className="max-w-sm sm:max-w-md md:max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-2xl">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Sign Up
         </h1>
@@ -68,7 +68,7 @@ const Signup = () => {
           </form>
         </Form>
       </div>
-      <div className="flex flex-col max-w-sm mx-auto mt-10 space-y-2">
+      <div className="flex flex-col max-w-sm sm:max-w-md md:max-w-lg mx-auto mt-10 space-y-2">
         <div className="flex flex-col">
           <p className="italic text-lg">&quot;The crawl is for all.&quot;</p>
           <p className="text-primary font-bold text-right">- Nick Miller</p>
