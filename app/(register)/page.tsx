@@ -51,7 +51,7 @@ const Signup = () => {
                   <FormControl>
                     <Input
                       className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                      placeholder="D. B. Cooper"
+                      placeholder="Ron Swanson"
                       {...field}
                     />
                   </FormControl>
