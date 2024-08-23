@@ -70,17 +70,17 @@ const Signup = () => {
       </div>
       <div className="max-w-sm mx-auto mt-10">
         <p className="italic text-lg mb-2">
-          "The crawl is for all." -{' '}
+          &quot;The crawl is for all.&quot; -{' '}
           <span className="text-primary font-bold">Nick Miller</span>
         </p>
         <p className="italic text-lg mb-2">
-          "I understand nothing about the wings we just ate except that they
-          were delicious and I'm probably going to eat 20 more." -{' '}
-          <span className="text-primary font-bold">Michael Scott</span>
+          &quot;I understand nothing about the wings we just ate except that
+          they were delicious and I&apos;m probably going to eat 20 more.&quot;
+          - <span className="text-primary font-bold">Michael Scott</span>
         </p>
         <p className="italic text-lg mb-2">
-          "Why would anyone ever eat anything besides breakfast food? People are
-          idiots. Except for chicken wings. They get a pass." -{' '}
+          &quot;Why would anyone ever eat anything besides breakfast food?
+          People are idiots. Except for chicken wings. They get a pass.&quot; -{' '}
           <span className="text-primary font-bold">Leslie Knope</span>
         </p>
       </div>
