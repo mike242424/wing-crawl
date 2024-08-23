@@ -22,7 +22,9 @@ const LocationCard = ({
     const fetchRating = async () => {
       const response = await fetch(
         `/api/rating?locationId=${location.id}&userId=${userId}`,
-        { cache: 'no-store' },
+        {
+          next: { revalidate: 0 },
+        },
       );
       const data = await response.json();
       setRating(data.rating || 0);
@@ -34,7 +36,7 @@ const LocationCard = ({
   const handleRating = async (newRating: number) => {
     setRating(newRating);
     await fetch('/api/rating', {
-      cache: 'no-store',
+      next: { revalidate: 0 },
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
