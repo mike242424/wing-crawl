@@ -10,7 +10,7 @@ const Dashboard = async () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-4xl mx-auto mt-10">
+      <div className="max-w-4xl mx-auto mt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {locations?.map((location, index) => (
             <LocationCard

@@ -37,7 +37,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-2xl">
+    <div className="max-w-sm mx-auto mt-10 p-6 bg-white rounded-lg shadow-2xl">
       <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
         Sign Up
       </h1>
