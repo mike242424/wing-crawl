@@ -23,7 +23,7 @@ const Results = () => {
   useEffect(() => {
     const fetchAverageRatings = async () => {
       try {
-        const response = await fetch('/api/results');
+        const response = await fetch('/api/results', { cache: 'no-cache' });
         const data = await response.json();
         setLocations(data);
       } catch (error) {
