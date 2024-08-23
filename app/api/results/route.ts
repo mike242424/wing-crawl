@@ -1,8 +1,6 @@
 import prisma from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const fetchCache = 'force-no-store';
-
 export async function GET(req: NextRequest) {
   try {
     const averageRatings = await prisma.location.findMany({

@@ -1,7 +1,5 @@
 'use client';
 
-export const fetchCache = 'force-no-store';
-
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -25,7 +23,9 @@ const Results = () => {
   useEffect(() => {
     const fetchAverageRatings = async () => {
       try {
-        const response = await fetch('/api/results', { cache: 'no-store' });
+        const response = await fetch('/api/results', {
+          next: { revalidate: 0 },
+        });
         const data = await response.json();
         setLocations(data);
       } catch (error) {
