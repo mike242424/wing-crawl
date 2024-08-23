@@ -1,5 +1,7 @@
 'use client';
 
+export const fetchCache = 'force-no-store';
+
 import { Button } from '@/components/ui/button';
 import {
   Table,
