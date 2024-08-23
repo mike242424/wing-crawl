@@ -61,7 +61,16 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { message: 'Rating saved successfully' },
-      { status: 200 },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control':
+            'no-store, no-cache, must-revalidate, proxy-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
+          'Surrogate-Control': 'no-store',
+        },
+      },
     );
   } catch (error) {
     return NextResponse.json(
