@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { SignupFormData } from '@/types/SignupFormDataType';
@@ -24,7 +23,6 @@ const Signup = () => {
       name: '',
     },
   });
-  const router = useRouter();
 
   const onSubmit = async (data: SignupFormData) => {
     try {
@@ -37,38 +35,56 @@ const Signup = () => {
   };
 
   return (
-    <div className="max-w-sm mx-auto mt-10 p-6 bg-white rounded-lg shadow-2xl">
-      <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
-        Sign Up
-      </h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700">Name:</FormLabel>
-                <FormControl>
-                  <Input
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                    placeholder="D. B. Cooper"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button
-            type="submit"
-            className="w-full py-2 bg-primary text-white font-semibold rounded-md hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            Register
-          </Button>
-        </form>
-      </Form>
-    </div>
+    <>
+      <div className="max-w-sm mx-auto mt-10 p-6 bg-white rounded-lg shadow-2xl">
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          Sign Up
+        </h1>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Name:</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                      placeholder="D. B. Cooper"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              className="w-full py-2 bg-primary text-white font-semibold rounded-md hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              Register
+            </Button>
+          </form>
+        </Form>
+      </div>
+      <div className="max-w-sm mx-auto mt-10">
+        <p className="italic text-lg mb-2">
+          "The crawl is for all." -{' '}
+          <span className="text-primary font-bold">Nick Miller</span>
+        </p>
+        <p className="italic text-lg mb-2">
+          "I understand nothing about the wings we just ate except that they
+          were delicious and I'm probably going to eat 20 more." -{' '}
+          <span className="text-primary font-bold">Michael Scott</span>
+        </p>
+        <p className="italic text-lg mb-2">
+          "Why would anyone ever eat anything besides breakfast food? People are
+          idiots. Except for chicken wings. They get a pass." -{' '}
+          <span className="text-primary font-bold">Leslie Knope</span>
+        </p>
+      </div>
+    </>
   );
 };
 
