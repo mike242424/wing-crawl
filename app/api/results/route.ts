@@ -30,11 +30,18 @@ export async function GET(req: NextRequest) {
         id: location.id,
         name: location.name,
         wing: location.wing,
-        averageScore: averageScore.toFixed(1),
+        averageScore: averageScore.toFixed(2),
       };
     });
 
-    return NextResponse.json(results, { status: 200 });
+    return NextResponse.json(results, {
+      status: 200,
+      headers: {
+        'Cache-Control': 'no-store',
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { message: 'Internal server error.' },
