@@ -11,12 +11,12 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: 'Guess saved successfully' },
+      { message: 'Guess saved successfully.' },
       { status: 200 },
     );
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error saving guess' },
+      { message: 'Error saving guess.' },
       { status: 500 },
     );
   }

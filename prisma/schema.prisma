@@ -8,10 +8,11 @@ datasource db {
 }
 
 model User {
-  id      String           @id @default(auto()) @map("_id") @db.ObjectId
-  name    String           @unique
-  ratings LocationRating[]
-  Session Session[]
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  name            String           @unique
+  guessWhoWillWin String?
+  ratings         LocationRating[]
+  Session         Session[]
 }
 
 model Session {
@@ -39,6 +40,8 @@ model LocationRating {
   meat            Int
   greasiness      Int
   overallTaste    Int
+  dippingSauce    String?
+  beenThereBefore Boolean  @default(false)
   userId          String   @db.ObjectId
   user            User     @relation(fields: [userId], references: [id])
   locationId      String   @db.ObjectId
