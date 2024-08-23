@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
     response.headers.append(
       'Set-Cookie',
       cookie.serialize('session-token', sessionToken, {
-        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 7,
         sameSite: 'strict',
@@ -47,7 +46,6 @@ export async function POST(req: NextRequest) {
     response.headers.append(
       'Set-Cookie',
       cookie.serialize('userId', user.id, {
-        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 7,
         sameSite: 'strict',

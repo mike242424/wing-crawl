@@ -29,7 +29,8 @@ const Signup = () => {
   const onSubmit = async (data: SignupFormData) => {
     try {
       await axios.post('/api/signup', { name: data.name });
-      router.push('/dashboard');
+
+      window.location.reload();
     } catch (error) {
       console.error('An error occurred:', error);
     }

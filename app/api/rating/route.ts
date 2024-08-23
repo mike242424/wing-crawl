@@ -26,7 +26,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ rating: rating?.score || 0 }, { status: 200 });
   } catch (error) {
-    console.error('Error fetching rating:', error);
     return NextResponse.json(
       { message: 'Internal server error.' },
       { status: 500 },
@@ -65,7 +64,6 @@ export async function POST(req: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error('Error saving rating:', error);
     return NextResponse.json(
       { message: 'Internal server error.' },
       { status: 500 },

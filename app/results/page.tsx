@@ -1,17 +1,23 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '@/components/ui/table';
 import { useEffect, useState } from 'react';
 
 const Results = () => {
-  const router = useRouter();
   const [locations, setLocations] = useState<
     { id: string; name: string; wing: string; averageScore: number }[]
   >([]);
 
   const handleClick = () => {
-    router.refresh();
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -38,36 +44,36 @@ const Results = () => {
           </Button>
         </div>
         <div className="overflow-x-auto rounded-lg">
-          <table className="min-w-full bg-white rounded-lg shadow-lg">
-            <thead>
-              <tr>
-                <th className="py-2 px-2 sm:px-4 bg-primary text-white font-bold text-left text-sm sm:text-base">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="py-2 px-2 sm:px-4 bg-primary text-white font-bold text-left text-sm sm:text-base">
                   Location
-                </th>
-                <th className="py-2 px-2 sm:px-4 bg-primary text-white font-bold text-left text-sm sm:text-base">
+                </TableHead>
+                <TableHead className="py-2 px-2 sm:px-4 bg-primary text-white font-bold text-left text-sm sm:text-base">
                   Wing
-                </th>
-                <th className="py-2 px-2 sm:px-4 bg-primary text-white font-bold text-left text-sm sm:text-base">
+                </TableHead>
+                <TableHead className="py-2 px-2 sm:px-4 bg-primary text-white font-bold text-left text-sm sm:text-base">
                   Average Score
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {locations.map((location) => (
-                <tr key={location.id}>
-                  <td className="py-4 px-2 sm:px-4 border-t border-gray-300 text-sm font-bold sm:text-base">
+                <TableRow key={location.id} className="hover:bg-gray-200">
+                  <TableCell className="py-4 px-2 sm:px-4 border-t border-gray-300 text-sm font-bold sm:text-base">
                     {location.name}
-                  </td>
-                  <td className="py-4 px-2 sm:px-4 border-t border-gray-300 text-sm font-bold sm:text-base">
+                  </TableCell>
+                  <TableCell className="py-4 px-2 sm:px-4 border-t border-gray-300 text-sm font-bold sm:text-base">
                     {location.wing}
-                  </td>
-                  <td className="py-4 px-2 sm:px-4 border-t border-gray-300 text-sm font-bold sm:text-base">
+                  </TableCell>
+                  <TableCell className="py-4 px-2 sm:px-4 border-t border-gray-300 text-sm font-bold sm:text-base">
                     {location.averageScore}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

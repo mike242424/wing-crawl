@@ -36,7 +36,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(results, { status: 200 });
   } catch (error) {
-    console.error('Error fetching average ratings:', error);
     return NextResponse.json(
       { message: 'Internal server error.' },
       { status: 500 },
