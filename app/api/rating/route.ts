@@ -20,11 +20,18 @@ export async function GET(req: NextRequest) {
         locationId: locationId,
       },
       select: {
-        score: true,
+        appearance: true,
+        aroma: true,
+        sauceQuantity: true,
+        spiceLevel: true,
+        skinConsistency: true,
+        meat: true,
+        greasiness: true,
+        overallTaste: true,
       },
     });
 
-    return NextResponse.json({ rating: rating?.score || 0 }, { status: 200 });
+    return NextResponse.json({ ratings: rating || {} }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { message: 'Internal server error.' },
@@ -35,7 +42,21 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { locationId, rating, userId } = await req.json();
+    const { locationId, userId, criterion, rating } = await req.json();
+
+    if (!userId || !locationId || !criterion || rating === undefined) {
+      return NextResponse.json(
+        {
+          message:
+            'Invalid request: missing userId, locationId, criterion, or rating.',
+        },
+        { status: 400 },
+      );
+    }
+
+    const dataToUpdate = {
+      [criterion]: rating,
+    };
 
     const existingRating = await prisma.locationRating.findFirst({
       where: {
@@ -47,14 +68,22 @@ export async function POST(req: NextRequest) {
     if (existingRating) {
       await prisma.locationRating.update({
         where: { id: existingRating.id },
-        data: { score: rating },
+        data: dataToUpdate,
       });
     } else {
       await prisma.locationRating.create({
         data: {
-          score: rating,
-          userId: userId,
-          locationId: locationId,
+          userId,
+          locationId,
+          appearance: 0, // Default values
+          aroma: 0, // Default values
+          sauceQuantity: 0, // Default values
+          spiceLevel: 0, // Default values
+          skinConsistency: 0, // Default values
+          meat: 0, // Default values
+          greasiness: 0, // Default values
+          overallTaste: 0, // Default values
+          ...dataToUpdate, // Overwrite the default value with the provided one
         },
       });
     }
@@ -73,6 +102,7 @@ export async function POST(req: NextRequest) {
       },
     );
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { message: 'Internal server error.' },
       { status: 500 },

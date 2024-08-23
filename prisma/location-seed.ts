@@ -5,28 +5,12 @@ const prisma = new PrismaClient();
 async function main() {
   const locations = [
     {
-      name: 'The Royal American',
-      wing: 'Magic Wings',
+      name: 'Bay Street Biergarten',
+      wing: 'Crispy Fried Buffalo Wings',
     },
     {
-      name: 'Home Team BBQ',
-      wing: "Fiery Ron's Smoked Chicken Wings",
-    },
-    {
-      name: "Heavy's Barburger",
-      wing: "Heavy's Jumbo Wings",
-    },
-    {
-      name: "Moe's Crosstown Tavern",
+      name: 'Bedford Falls',
       wing: 'Hot Wings',
-    },
-    {
-      name: 'Pink Bellies',
-      wing: 'Garlic KFC Wings',
-    },
-    {
-      name: 'Prohibition',
-      wing: 'Charred Wings',
     },
     {
       name: 'Charleston Beer Works',
@@ -34,11 +18,11 @@ async function main() {
     },
     {
       name: 'The Brick',
-      wing: 'Hot Buffalo Wings',
+      wing: 'Hot Buffalo Tavern Wings',
     },
     {
-      name: 'Bay Street Biergarten',
-      wing: 'Crispy Fried Buffalo Wings',
+      name: 'Rusty Bull Brewing Co.',
+      wing: 'Hot Wings',
     },
     {
       name: 'The Griffon',

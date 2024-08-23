@@ -10,29 +10,46 @@ export async function GET(req: NextRequest) {
         wing: true,
         LocationRating: {
           select: {
-            score: true,
+            appearance: true,
+            aroma: true,
+            sauceQuantity: true,
+            spiceLevel: true,
+            skinConsistency: true,
+            meat: true,
+            greasiness: true,
+            overallTaste: true,
           },
         },
       },
     });
 
     const results = averageRatings.map((location) => {
-      const totalScore = location.LocationRating.reduce(
-        (sum, rating) => sum + rating.score,
-        0,
-      );
+      const totalScores = location.LocationRating.map((rating) => {
+        return (
+          rating.appearance +
+          rating.aroma +
+          rating.sauceQuantity +
+          rating.spiceLevel +
+          rating.skinConsistency +
+          rating.meat +
+          rating.greasiness +
+          rating.overallTaste
+        );
+      });
+
+      const totalScore = totalScores.reduce((sum, score) => sum + score, 0);
       const averageScore =
-        location.LocationRating.length > 0
-          ? totalScore / location.LocationRating.length
-          : 0;
+        totalScores.length > 0 ? totalScore / totalScores.length : 0;
 
       return {
         id: location.id,
         name: location.name,
         wing: location.wing,
-        averageScore: averageScore.toFixed(2),
+        averageScore: parseFloat(averageScore.toFixed(2)),
       };
     });
+
+    results.sort((a, b) => b.averageScore - a.averageScore);
 
     return NextResponse.json(results, {
       status: 200,
