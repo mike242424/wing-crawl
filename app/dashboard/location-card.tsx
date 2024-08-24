@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import Spinner from '@/components/spinner';
+import { useRouter } from 'next/navigation';
 
 const criteriaMap = {
   appearance: 'appearance',
@@ -37,6 +38,7 @@ const LocationCard = ({
   initialBeenThereBefore: boolean;
   initialNotes: string;
 }) => {
+  const router = useRouter();
   const [ratings, setRatings] = useState<Record<Criteria, number>>({
     appearance: 0,
     aroma: 0,
@@ -118,6 +120,7 @@ const LocationCard = ({
           notes: notes,
         }),
       });
+      router.refresh();
     } catch (error) {
       console.error('Failed to submit data:', error);
     } finally {
