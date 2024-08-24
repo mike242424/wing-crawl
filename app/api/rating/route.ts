@@ -57,9 +57,16 @@ export async function POST(req: NextRequest) {
     }
 
     const dataToUpdate = {
-      ...ratings,
-      beenThereBefore: beenThereBefore,
-      notes: notes,
+      appearance: ratings.appearance ?? 0,
+      aroma: ratings.aroma ?? 0,
+      sauceQuantity: ratings.sauceQuantity ?? 0,
+      spiceLevel: ratings.spiceLevel ?? 0,
+      skinConsistency: ratings.skinConsistency ?? 0,
+      meat: ratings.meat ?? 0,
+      greasiness: ratings.greasiness ?? 0,
+      overallTaste: ratings.overallTaste ?? 0,
+      beenThereBefore: beenThereBefore ?? false,
+      notes: notes ?? '',
     };
 
     const existingRating = await prisma.locationRating.findFirst({
@@ -98,7 +105,7 @@ export async function POST(req: NextRequest) {
       },
     );
   } catch (error) {
-    console.log(error);
+    console.log('Error:', error);
     return NextResponse.json(
       { message: 'Internal server error.' },
       { status: 500 },

@@ -32,14 +32,14 @@ model Location {
 
 model LocationRating {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  appearance      Int
-  aroma           Int
-  sauceQuantity   Int
-  spiceLevel      Int
-  skinConsistency Int
-  meat            Int
-  greasiness      Int
-  overallTaste    Int
+  appearance      Int      @default(0)
+  aroma           Int      @default(0)
+  sauceQuantity   Int      @default(0)
+  spiceLevel      Int      @default(0)
+  skinConsistency Int      @default(0)
+  meat            Int      @default(0)
+  greasiness      Int      @default(0)
+  overallTaste    Int      @default(0)
   notes           String?
   beenThereBefore Boolean  @default(false)
   userId          String   @db.ObjectId
