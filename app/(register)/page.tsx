@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { SignupFormData } from '@/types/SignupFormDataType';
@@ -21,6 +21,7 @@ import Spinner from '@/components/spinner';
 const Signup = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
@@ -34,18 +35,23 @@ const Signup = () => {
     setLoading(true);
     try {
       await axios.post('/api/signup', { name: data.name });
-
-      window.location.reload();
+      setIsSubmitted(true); // Set submission state to true after successful submission
     } catch (error: any) {
+      setLoading(false); // Stop loading if there's an error
       if (error.response && error.response.status === 400) {
         setServerError(error.response.data.message);
       } else {
         setServerError('An unexpected error occurred. Please try again later.');
       }
-    } finally {
-      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isSubmitted) {
+      // Redirect to dashboard after successful signup
+      window.location.href = '/dashboard';
+    }
+  }, [isSubmitted]); // Trigger redirection when form is successfully submitted
 
   if (loading) {
     return (
