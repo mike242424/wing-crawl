@@ -15,8 +15,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useState } from 'react';
 
 const Signup = () => {
+  const [serverError, setServerError] = useState<string | null>(null);
+
   const form = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -25,12 +28,17 @@ const Signup = () => {
   });
 
   const onSubmit = async (data: SignupFormData) => {
+    setServerError(null);
     try {
       await axios.post('/api/signup', { name: data.name });
 
       window.location.reload();
-    } catch (error) {
-      console.error('An error occurred:', error);
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        setServerError(error.response.data.message);
+      } else {
+        setServerError('An unexpected error occurred. Please try again later.');
+      }
     }
   };
 
@@ -45,30 +53,36 @@ const Signup = () => {
             <FormField
               control={form.control}
               name="name"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel className="text-gray-700">Name:</FormLabel>
                   <FormControl>
                     <Input
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="Ron Swanson"
                       {...field}
+                      onChange={(e) => {
+                        setServerError(null);
+                        field.onChange(e);
+                      }}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-primary text-sm mt-2">
+                    {fieldState.error?.message || serverError}
+                  </FormMessage>
                 </FormItem>
               )}
             />
             <Button
               type="submit"
-              className="w-full py-2 bg-primary text-white font-semibold rounded-md hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full py-3 bg-primary text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-primary mt-4"
             >
               Register
             </Button>
           </form>
         </Form>
       </div>
-      <div className="flex flex-col max-w-sm sm:max-w-md md:max-w-lg mx-auto mt-10 space-y-2">
+      <div className="flex flex-col max-w-sm sm:max-w-md md:max-w-lg mx-auto mt-10 space-y-4">
         <div className="flex flex-col">
           <p className="italic text-lg">&quot;The crawl is for all.&quot;</p>
           <p className="text-primary font-bold text-right">- Nick Miller</p>
