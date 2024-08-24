@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import Star from '@/app/dashboard/star';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
 import Spinner from '@/components/spinner';
-
 
 const criteriaMap = {
   appearance: 'appearance',
@@ -48,9 +48,12 @@ const LocationCard = ({
     overallTaste: 0,
   });
 
-  const [beenThereBefore, setBeenThereBefore] = useState(initialBeenThereBefore);
+  const [beenThereBefore, setBeenThereBefore] = useState(
+    initialBeenThereBefore,
+  );
   const [notes, setNotes] = useState(initialNotes || '');
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -83,19 +86,9 @@ const LocationCard = ({
     fetchRatings();
   }, [location.id, userId]);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      updateNotes(notes);
-    }, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [notes]);
-
-  const updateNotes = async (debouncedNotes: string) => {
+  const submitNotes = async () => {
+    setSubmitting(true);
     try {
-      setLoading(true);
       await fetch('/api/rating', {
         next: { revalidate: 0 },
         method: 'POST',
@@ -105,13 +98,13 @@ const LocationCard = ({
         body: JSON.stringify({
           locationId: location.id,
           userId: userId,
-          notes: debouncedNotes,
+          notes: notes,
         }),
       });
     } catch (error) {
       console.error('Failed to update notes:', error);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -210,7 +203,9 @@ const LocationCard = ({
         <>
           {criteria.map((criterion) => (
             <div key={criterion.key} className="mb-4">
-              <h3 className="text-md font-medium capitalize">{criterion.name}</h3>
+              <h3 className="text-md font-medium capitalize">
+                {criterion.name}
+              </h3>
               <div className="flex">
                 {[...Array(10)].map((_, i) => (
                   <Star
@@ -252,6 +247,13 @@ const LocationCard = ({
               placeholder="Dipping Sauces/Etc."
               className="w-full"
             />
+            <Button
+              onClick={submitNotes}
+              className="mt-2 w-full bg-primary text-white"
+              disabled={submitting}
+            >
+              {submitting ? 'Submitting...' : 'Submit Notes'}
+            </Button>
           </div>
         </>
       )}
