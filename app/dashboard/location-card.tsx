@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Star from '@/app/dashboard/star';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
+import Spinner from '@/components/spinner';
+
 
 const criteriaMap = {
   appearance: 'appearance',
@@ -46,14 +48,14 @@ const LocationCard = ({
     overallTaste: 0,
   });
 
-  const [beenThereBefore, setBeenThereBefore] = useState(
-    initialBeenThereBefore,
-  );
+  const [beenThereBefore, setBeenThereBefore] = useState(initialBeenThereBefore);
   const [notes, setNotes] = useState(initialNotes || '');
+  const [loading, setLoading] = useState(false); 
 
   useEffect(() => {
     const fetchRatings = async () => {
       try {
+        setLoading(true);
         const response = await fetch(
           `/api/rating?locationId=${location.id}&userId=${userId}`,
           {
@@ -73,6 +75,8 @@ const LocationCard = ({
         }
       } catch (error) {
         console.error('Error fetching ratings:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -91,6 +95,7 @@ const LocationCard = ({
 
   const updateNotes = async (debouncedNotes: string) => {
     try {
+      setLoading(true);
       await fetch('/api/rating', {
         next: { revalidate: 0 },
         method: 'POST',
@@ -105,6 +110,8 @@ const LocationCard = ({
       });
     } catch (error) {
       console.error('Failed to update notes:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -113,35 +120,49 @@ const LocationCard = ({
       ...prevRatings,
       [criterion]: newRating,
     }));
-    await fetch('/api/rating', {
-      next: { revalidate: 0 },
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        locationId: location.id,
-        userId: userId,
-        criterion,
-        rating: newRating,
-      }),
-    });
+    setLoading(true);
+    try {
+      await fetch('/api/rating', {
+        next: { revalidate: 0 },
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          locationId: location.id,
+          userId: userId,
+          criterion,
+          rating: newRating,
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to update rating:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBeenThereBeforeChange = async (value: boolean) => {
     setBeenThereBefore(value);
-    await fetch('/api/rating', {
-      next: { revalidate: 0 },
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        locationId: location.id,
-        userId: userId,
-        beenThereBefore: value,
-      }),
-    });
+    setLoading(true);
+    try {
+      await fetch('/api/rating', {
+        next: { revalidate: 0 },
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          locationId: location.id,
+          userId: userId,
+          beenThereBefore: value,
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to update "been there before" status:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -181,51 +202,59 @@ const LocationCard = ({
       </h2>
       <p className="text-lg font-bold text-primary mb-4">{location.wing}</p>
 
-      {criteria.map((criterion) => (
-        <div key={criterion.key} className="mb-4">
-          <h3 className="text-md font-medium capitalize">{criterion.name}</h3>
-          <div className="flex">
-            {[...Array(10)].map((_, i) => (
-              <Star
-                key={i}
-                filled={i < ratings[criterion.key]}
-                onClick={() => handleRating(criterion.key, i + 1)}
-              />
-            ))}
-          </div>
+      {loading ? (
+        <div className="flex justify-center items-center">
+          <Spinner />
         </div>
-      ))}
+      ) : (
+        <>
+          {criteria.map((criterion) => (
+            <div key={criterion.key} className="mb-4">
+              <h3 className="text-md font-medium capitalize">{criterion.name}</h3>
+              <div className="flex">
+                {[...Array(10)].map((_, i) => (
+                  <Star
+                    key={i}
+                    filled={i < ratings[criterion.key]}
+                    onClick={() => handleRating(criterion.key, i + 1)}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
 
-      <div className="mb-4">
-        <h3 className="text-md font-medium mb-1">Been Here Before:</h3>
-        <div className="flex items-center">
-          <label className="mr-4 flex items-center space-x-2">
-            <Checkbox
-              checked={beenThereBefore === true}
-              onCheckedChange={() => handleBeenThereBeforeChange(true)}
-              className="me-1"
+          <div className="mb-4">
+            <h3 className="text-md font-medium mb-1">Been Here Before:</h3>
+            <div className="flex items-center">
+              <label className="mr-4 flex items-center space-x-2">
+                <Checkbox
+                  checked={beenThereBefore === true}
+                  onCheckedChange={() => handleBeenThereBeforeChange(true)}
+                  className="me-1"
+                />
+                Yes
+              </label>
+              <label className="flex items-center space-x-2">
+                <Checkbox
+                  checked={beenThereBefore === false}
+                  onCheckedChange={() => handleBeenThereBeforeChange(false)}
+                  className="me-1"
+                />
+                No
+              </label>
+            </div>
+          </div>
+          <div className="mb-4">
+            <h3 className="text-md font-medium mb-2">Notes:</h3>
+            <Textarea
+              value={notes}
+              onChange={handleNotesChange}
+              placeholder="Dipping Sauces/Etc."
+              className="w-full"
             />
-            Yes
-          </label>
-          <label className="flex items-center space-x-2">
-            <Checkbox
-              checked={beenThereBefore === false}
-              onCheckedChange={() => handleBeenThereBeforeChange(false)}
-              className="me-1"
-            />
-            No
-          </label>
-        </div>
-      </div>
-      <div className="mb-4">
-        <h3 className="text-md font-medium mb-2">Notes:</h3>
-        <Textarea
-          value={notes}
-          onChange={handleNotesChange}
-          placeholder="Dipping Sauces/Etc."
-          className="w-full"
-        />
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

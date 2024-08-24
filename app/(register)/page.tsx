@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { SignupFormData } from '@/types/SignupFormDataType';
@@ -15,10 +16,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import Spinner from '@/components/spinner';
 
 const Signup = () => {
   const [serverError, setServerError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
@@ -29,6 +31,7 @@ const Signup = () => {
 
   const onSubmit = async (data: SignupFormData) => {
     setServerError(null);
+    setLoading(true);
     try {
       await axios.post('/api/signup', { name: data.name });
 
@@ -39,6 +42,8 @@ const Signup = () => {
       } else {
         setServerError('An unexpected error occurred. Please try again later.');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,39 +53,43 @@ const Signup = () => {
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Sign Up
         </h1>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-700">Name:</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
-                      placeholder="Ron Swanson"
-                      {...field}
-                      onChange={(e) => {
-                        setServerError(null);
-                        field.onChange(e);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-primary text-sm mt-2">
-                    {fieldState.error?.message || serverError}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <Button
-              type="submit"
-              className="w-full py-3 bg-primary text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-primary mt-4"
-            >
-              Register
-            </Button>
-          </form>
-        </Form>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-700">Name:</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                        placeholder="Ron Swanson"
+                        {...field}
+                        onChange={(e) => {
+                          setServerError(null);
+                          field.onChange(e);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-primary text-sm mt-2">
+                      {fieldState.error?.message || serverError}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                className="w-full py-3 bg-primary text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-primary mt-4"
+              >
+                Register
+              </Button>
+            </form>
+          </Form>
+        )}
       </div>
       <div className="flex flex-col max-w-sm sm:max-w-md md:max-w-lg mx-auto mt-10 space-y-4">
         <div className="flex flex-col">

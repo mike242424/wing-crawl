@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import prisma from '@/lib/db';
-import LocationCard from './location-card';
-import GuessWhoWillWin from './guess-who-will-win';
+import LocationCard from '@/app/dashboard/location-card';
+import GuessWhoWillWin from '@/app/dashboard/guess-who-will-win';
 
 const Dashboard = async () => {
   const cookieStore = cookies();

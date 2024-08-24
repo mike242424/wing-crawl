@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -9,14 +10,16 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table';
-import { useEffect, useState } from 'react';
+import Spinner from '@/components/spinner';
 
 const Results = () => {
   const [locations, setLocations] = useState<
     { id: string; name: string; wing: string; averageScore: number }[]
   >([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const handleClick = () => {
+    setLoading(true);
     window.location.reload();
   };
 
@@ -30,11 +33,21 @@ const Results = () => {
         setLocations(data);
       } catch (error) {
         console.error('Error fetching average ratings:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchAverageRatings();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
