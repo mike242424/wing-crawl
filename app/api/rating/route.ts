@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
         meat: true,
         greasiness: true,
         overallTaste: true,
+        beenThereBefore: true,
       },
     });
 
@@ -42,21 +43,32 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { locationId, userId, criterion, rating } = await req.json();
+    const { locationId, userId, criterion, rating, beenThereBefore } =
+      await req.json();
 
-    if (!userId || !locationId || !criterion || rating === undefined) {
+    if (
+      !userId ||
+      !locationId ||
+      (criterion && rating === undefined && beenThereBefore === undefined)
+    ) {
       return NextResponse.json(
         {
           message:
-            'Invalid request: missing userId, locationId, criterion, or rating.',
+            'Invalid request: missing userId, locationId, criterion, rating, or beenThereBefore.',
         },
         { status: 400 },
       );
     }
 
-    const dataToUpdate = {
-      [criterion]: rating,
-    };
+    const dataToUpdate: any = {};
+
+    if (criterion && rating !== undefined) {
+      dataToUpdate[criterion] = rating;
+    }
+
+    if (beenThereBefore !== undefined) {
+      dataToUpdate['beenThereBefore'] = beenThereBefore;
+    }
 
     const existingRating = await prisma.locationRating.findFirst({
       where: {
@@ -75,15 +87,16 @@ export async function POST(req: NextRequest) {
         data: {
           userId,
           locationId,
-          appearance: 0, // Default values
-          aroma: 0, // Default values
-          sauceQuantity: 0, // Default values
-          spiceLevel: 0, // Default values
-          skinConsistency: 0, // Default values
-          meat: 0, // Default values
-          greasiness: 0, // Default values
-          overallTaste: 0, // Default values
-          ...dataToUpdate, // Overwrite the default value with the provided one
+          appearance: 0,
+          aroma: 0,
+          sauceQuantity: 0,
+          spiceLevel: 0,
+          skinConsistency: 0,
+          meat: 0,
+          greasiness: 0,
+          overallTaste: 0,
+          beenThereBefore: beenThereBefore ?? false,
+          ...dataToUpdate,
         },
       });
     }

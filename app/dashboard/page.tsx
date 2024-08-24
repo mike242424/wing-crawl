@@ -7,7 +7,18 @@ const Dashboard = async () => {
   const cookieStore = cookies();
   const userId = cookieStore.get('userId')?.value as string;
 
-  const locations = await prisma.location.findMany({});
+  // Fetch all locations and their corresponding user ratings
+  const locations = await prisma.location.findMany({
+    include: {
+      LocationRating: {
+        where: { userId: userId },
+        select: {
+          beenThereBefore: true,
+        },
+      },
+    },
+  });
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { guessWhoWillWin: true },
@@ -25,14 +36,21 @@ const Dashboard = async () => {
           initialGuess={user?.guessWhoWillWin || null}
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {locations.map((location, index) => (
-            <LocationCard
-              key={location.id}
-              location={location}
-              index={index}
-              userId={userId}
-            />
-          ))}
+          {locations.map((location, index) => {
+            const beenThereBefore = location.LocationRating.length
+              ? location.LocationRating[0].beenThereBefore
+              : false;
+
+            return (
+              <LocationCard
+                key={location.id}
+                location={location}
+                index={index}
+                userId={userId}
+                initialBeenThereBefore={beenThereBefore}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

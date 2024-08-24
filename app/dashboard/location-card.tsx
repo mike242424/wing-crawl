@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Star from './star';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const criteriaMap = {
   appearance: 'appearance',
@@ -20,6 +21,7 @@ const LocationCard = ({
   location,
   index,
   userId,
+  initialBeenThereBefore,
 }: {
   location: {
     id: string;
@@ -28,6 +30,7 @@ const LocationCard = ({
   };
   index: number;
   userId: string;
+  initialBeenThereBefore: boolean;
 }) => {
   const [ratings, setRatings] = useState<Record<Criteria, number>>({
     appearance: 0,
@@ -40,6 +43,10 @@ const LocationCard = ({
     overallTaste: 0,
   });
 
+  const [beenThereBefore, setBeenThereBefore] = useState(
+    initialBeenThereBefore,
+  );
+
   useEffect(() => {
     const fetchRatings = async () => {
       const response = await fetch(
@@ -50,6 +57,7 @@ const LocationCard = ({
       );
       const data = await response.json();
       setRatings(data.ratings || ratings);
+      setBeenThereBefore(data.beenThereBefore || initialBeenThereBefore);
     };
 
     fetchRatings();
@@ -71,6 +79,22 @@ const LocationCard = ({
         userId: userId,
         criterion,
         rating: newRating,
+      }),
+    });
+  };
+
+  const handleBeenThereBeforeChange = async (value: boolean) => {
+    setBeenThereBefore(value);
+    await fetch('/api/rating', {
+      next: { revalidate: 0 },
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        locationId: location.id,
+        userId: userId,
+        beenThereBefore: value,
       }),
     });
   };
@@ -122,6 +146,28 @@ const LocationCard = ({
           </div>
         </div>
       ))}
+
+      <div className="mb-4">
+        <h3 className="text-md font-medium mb-1">Been Here Before:</h3>
+        <div className="flex items-center">
+          <label className="mr-4 flex items-center space-x-2">
+            <Checkbox
+              checked={beenThereBefore === true}
+              onCheckedChange={() => handleBeenThereBeforeChange(true)}
+              className="me-1"
+            />
+            Yes
+          </label>
+          <label className="flex items-center space-x-2">
+            <Checkbox
+              checked={beenThereBefore === false}
+              onCheckedChange={() => handleBeenThereBeforeChange(false)}
+              className="me-1"
+            />
+            No
+          </label>
+        </div>
+      </div>
     </div>
   );
 };
