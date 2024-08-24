@@ -35,9 +35,9 @@ const Signup = () => {
     setLoading(true);
     try {
       await axios.post('/api/signup', { name: data.name });
-      setIsSubmitted(true); // Set submission state to true after successful submission
+      setIsSubmitted(true);
     } catch (error: any) {
-      setLoading(false); // Stop loading if there's an error
+      setLoading(false);
       if (error.response && error.response.status === 400) {
         setServerError(error.response.data.message);
       } else {
@@ -48,10 +48,9 @@ const Signup = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      // Redirect to dashboard after successful signup
       window.location.href = '/dashboard';
     }
-  }, [isSubmitted]); // Trigger redirection when form is successfully submitted
+  }, [isSubmitted]);
 
   if (loading) {
     return (
