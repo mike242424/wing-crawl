@@ -7,13 +7,13 @@ const Dashboard = async () => {
   const cookieStore = cookies();
   const userId = cookieStore.get('userId')?.value as string;
 
-  // Fetch all locations and their corresponding user ratings
   const locations = await prisma.location.findMany({
     include: {
       LocationRating: {
         where: { userId: userId },
         select: {
           beenThereBefore: true,
+          notes: true,
         },
       },
     },
@@ -37,9 +37,9 @@ const Dashboard = async () => {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {locations.map((location, index) => {
-            const beenThereBefore = location.LocationRating.length
-              ? location.LocationRating[0].beenThereBefore
-              : false;
+            const locationRating = location.LocationRating[0] || {};
+            const beenThereBefore = locationRating.beenThereBefore ?? false;
+            const notes = locationRating.notes ?? '';
 
             return (
               <LocationCard
@@ -48,6 +48,7 @@ const Dashboard = async () => {
                 index={index}
                 userId={userId}
                 initialBeenThereBefore={beenThereBefore}
+                initialNotes={notes}
               />
             );
           })}

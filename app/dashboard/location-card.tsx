@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Star from './star';
+import Star from '@/app/dashboard/star';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 
 const criteriaMap = {
   appearance: 'appearance',
@@ -22,6 +23,7 @@ const LocationCard = ({
   index,
   userId,
   initialBeenThereBefore,
+  initialNotes,
 }: {
   location: {
     id: string;
@@ -31,6 +33,7 @@ const LocationCard = ({
   index: number;
   userId: string;
   initialBeenThereBefore: boolean;
+  initialNotes: string;
 }) => {
   const [ratings, setRatings] = useState<Record<Criteria, number>>({
     appearance: 0,
@@ -46,22 +49,64 @@ const LocationCard = ({
   const [beenThereBefore, setBeenThereBefore] = useState(
     initialBeenThereBefore,
   );
+  const [notes, setNotes] = useState(initialNotes || '');
 
   useEffect(() => {
     const fetchRatings = async () => {
-      const response = await fetch(
-        `/api/rating?locationId=${location.id}&userId=${userId}`,
-        {
-          next: { revalidate: 0 },
-        },
-      );
-      const data = await response.json();
-      setRatings(data.ratings || ratings);
-      setBeenThereBefore(data.beenThereBefore || initialBeenThereBefore);
+      try {
+        const response = await fetch(
+          `/api/rating?locationId=${location.id}&userId=${userId}`,
+          {
+            next: { revalidate: 0 },
+          },
+        );
+        const data = await response.json();
+
+        if (data.ratings) {
+          setRatings(data.ratings);
+        }
+        if (typeof data.beenThereBefore === 'boolean') {
+          setBeenThereBefore(data.beenThereBefore);
+        }
+        if (data.notes) {
+          setNotes(data.notes);
+        }
+      } catch (error) {
+        console.error('Error fetching ratings:', error);
+      }
     };
 
     fetchRatings();
   }, [location.id, userId]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      updateNotes(notes);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [notes]);
+
+  const updateNotes = async (debouncedNotes: string) => {
+    try {
+      await fetch('/api/rating', {
+        next: { revalidate: 0 },
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          locationId: location.id,
+          userId: userId,
+          notes: debouncedNotes,
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to update notes:', error);
+    }
+  };
 
   const handleRating = async (criterion: Criteria, newRating: number) => {
     setRatings((prevRatings) => ({
@@ -97,6 +142,10 @@ const LocationCard = ({
         beenThereBefore: value,
       }),
     });
+  };
+
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNotes(e.target.value);
   };
 
   const criteria: { name: string; key: Criteria }[] = [
@@ -167,6 +216,15 @@ const LocationCard = ({
             No
           </label>
         </div>
+      </div>
+      <div className="mb-4">
+        <h3 className="text-md font-medium mb-2">Notes:</h3>
+        <Textarea
+          value={notes}
+          onChange={handleNotesChange}
+          placeholder="Dipping Sauces/Etc."
+          className="w-full"
+        />
       </div>
     </div>
   );
