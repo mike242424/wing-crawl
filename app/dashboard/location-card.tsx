@@ -1,12 +1,12 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Star from '@/app/dashboard/star';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import Spinner from '@/components/spinner';
-import { useRouter } from 'next/navigation';
 
 const criteriaMap = {
   appearance: 'appearance',

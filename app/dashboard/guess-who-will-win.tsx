@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { GuessWhoWillWinProps } from '@/types/GuessWhoWillWinType';
 import Spinner from '@/components/spinner';
@@ -9,6 +10,7 @@ const GuessWhoWillWin = ({
   locations,
   initialGuess,
 }: GuessWhoWillWinProps) => {
+  const router = useRouter();
   const [guess, setGuess] = useState<string | null>(initialGuess || null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -25,6 +27,7 @@ const GuessWhoWillWin = ({
 
       if (res.ok) {
         setGuess(locationId);
+        router.refresh();
       } else {
         console.error('Error saving guess.');
       }
