@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { GuessWhoWillWinProps } from '@/types/GuessWhoWillWinType';
 import Spinner from '@/components/spinner';
+import ConfirmationModal from '@/components/confirmationModal';
 
 const GuessWhoWillWin = ({
   userId,
@@ -13,20 +14,25 @@ const GuessWhoWillWin = ({
   const router = useRouter();
   const [guess, setGuess] = useState<string | null>(initialGuess || null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedLocation, setSelectedLocation] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
-  const handleGuess = async (locationId: string) => {
-    if (guess || loading) return;
+  const handleGuess = async () => {
+    if (guess || loading || !selectedLocation) return;
     setLoading(true);
 
     try {
       const res = await fetch('/api/guess', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, guessWhoWillWin: locationId }),
+        body: JSON.stringify({ userId, guessWhoWillWin: selectedLocation.id }),
       });
 
       if (res.ok) {
-        setGuess(locationId);
+        setGuess(selectedLocation.id);
         router.refresh();
       } else {
         console.error('Error saving guess.');
@@ -35,7 +41,17 @@ const GuessWhoWillWin = ({
       console.error('Error saving guess.', error);
     } finally {
       setLoading(false);
+      setModalOpen(false);
     }
+  };
+
+  const handleClickLocation = (locationId: string, locationName: string) => {
+    setSelectedLocation({ id: locationId, name: locationName });
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
 
   return (
@@ -53,9 +69,9 @@ const GuessWhoWillWin = ({
               className={`px-4 py-2 rounded ${
                 guess === location.id
                   ? 'bg-primary text-white'
-                  : 'bg-gray-200 text-black'
+                  : 'bg-gray-200 hover:bg-gray-200/80 text-black'
               }`}
-              onClick={() => handleGuess(location.id)}
+              onClick={() => handleClickLocation(location.id, location.name)}
               disabled={!!guess}
             >
               {location.name}
@@ -72,6 +88,12 @@ const GuessWhoWillWin = ({
           </p>
         </div>
       )}
+      <ConfirmationModal
+        isOpen={modalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleGuess}
+        locationName={selectedLocation?.name || ''}
+      />
     </div>
   );
 };
