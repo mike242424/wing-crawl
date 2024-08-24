@@ -45,7 +45,7 @@ const Results = () => {
             Refresh
           </Button>
         </div>
-        <div className="overflow-x-auto rounded-lg">
+        <div className="overflow-x-auto rounded-lg shadow-2xl">
           <Table>
             <TableHeader>
               <TableRow>

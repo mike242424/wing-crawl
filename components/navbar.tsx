@@ -18,7 +18,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-primary py-4 shadow-md">
+    <nav className="bg-primary py-4 shadow-2xl">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="font-bold text-white text-xl">
           Charleston Wing Crawl 2024

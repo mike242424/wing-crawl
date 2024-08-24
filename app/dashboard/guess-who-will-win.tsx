@@ -31,7 +31,7 @@ const GuessWhoWillWin = ({
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow mb-6">
+    <div className="bg-white p-4 rounded shadow-2xl mb-6">
       <h3 className="text-xl font-semibold mb-4">Guess Who Will Win</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {locations.map((location) => (

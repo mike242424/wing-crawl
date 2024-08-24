@@ -126,7 +126,7 @@ const LocationCard = ({
   ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+    <div className="bg-white p-6 rounded-lg shadow-2xl hover:shadow-2xl transition-shadow duration-300">
       <h2 className="text-2xl font-semibold mb-2">
         {index + 1}. {location?.name}
       </h2>
