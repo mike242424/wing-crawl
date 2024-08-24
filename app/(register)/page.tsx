@@ -47,49 +47,53 @@ const Signup = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center w-full">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="max-w-sm sm:max-w-md md:max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-2xl">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
           Sign Up
         </h1>
-        {loading ? (
-          <Spinner />
-        ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">Name:</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
-                        placeholder="Ron Swanson"
-                        {...field}
-                        onChange={(e) => {
-                          setServerError(null);
-                          field.onChange(e);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-primary text-sm mt-2">
-                      {fieldState.error?.message || serverError}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="submit"
-                className="w-full py-3 bg-primary text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-primary mt-4"
-              >
-                Register
-              </Button>
-            </form>
-          </Form>
-        )}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700">Name:</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                      placeholder="Ron Swanson"
+                      {...field}
+                      onChange={(e) => {
+                        setServerError(null);
+                        field.onChange(e);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-primary text-sm mt-2">
+                    {fieldState.error?.message || serverError}
+                  </FormMessage>
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              className="w-full py-3 bg-primary text-white font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-primary mt-4"
+            >
+              Register
+            </Button>
+          </form>
+        </Form>
       </div>
       <div className="flex flex-col max-w-sm sm:max-w-md md:max-w-lg mx-auto mt-10 space-y-4">
         <div className="flex flex-col">
