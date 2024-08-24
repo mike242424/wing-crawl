@@ -86,7 +86,22 @@ const LocationCard = ({
     fetchRatings();
   }, [location.id, userId]);
 
-  const submitNotes = async () => {
+  const handleRating = (criterion: Criteria, newRating: number) => {
+    setRatings((prevRatings) => ({
+      ...prevRatings,
+      [criterion]: prevRatings[criterion] === newRating ? 0 : newRating,
+    }));
+  };
+
+  const handleBeenThereBeforeChange = (value: boolean) => {
+    setBeenThereBefore(value);
+  };
+
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNotes(e.target.value);
+  };
+
+  const handleSubmit = async () => {
     setSubmitting(true);
     try {
       await fetch('/api/rating', {
@@ -98,92 +113,40 @@ const LocationCard = ({
         body: JSON.stringify({
           locationId: location.id,
           userId: userId,
+          ratings: ratings,
+          beenThereBefore: beenThereBefore,
           notes: notes,
         }),
       });
     } catch (error) {
-      console.error('Failed to update notes:', error);
+      console.error('Failed to submit data:', error);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleRating = async (criterion: Criteria, newRating: number) => {
-    setRatings((prevRatings) => ({
-      ...prevRatings,
-      [criterion]: newRating,
-    }));
-    setLoading(true);
-    try {
-      await fetch('/api/rating', {
-        next: { revalidate: 0 },
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          locationId: location.id,
-          userId: userId,
-          criterion,
-          rating: newRating,
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to update rating:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleBeenThereBeforeChange = async (value: boolean) => {
-    setBeenThereBefore(value);
-    setLoading(true);
-    try {
-      await fetch('/api/rating', {
-        next: { revalidate: 0 },
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          locationId: location.id,
-          userId: userId,
-          beenThereBefore: value,
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to update "been there before" status:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNotes(e.target.value);
-  };
-
   const criteria: { name: string; key: Criteria }[] = [
-    { name: 'appearance (1 = ugly, 10 = beautiful)', key: 'appearance' },
-    { name: "aroma (1 = poor, 10 = can't wait to eat)", key: 'aroma' },
+    { name: 'appearance (0 = ugly, 10 = beautiful)', key: 'appearance' },
+    { name: "aroma (0 = poor, 10 = can't wait to eat)", key: 'aroma' },
     {
-      name: 'sauce Quantity (1 = not enough/too much, 10 = just right)',
+      name: 'sauce Quantity (0 = not enough/too much, 10 = just right)',
       key: 'sauceQuantity',
     },
     {
-      name: 'spice Level (1 = too mild/too hot, 10 = on the money)',
+      name: 'spice Level (0 = too mild/too hot, 10 = on the money)',
       key: 'spiceLevel',
     },
     {
-      name: 'skin Consistency (1 = too soggy/too crispy, 10 = perfection)',
+      name: 'skin Consistency (0 = too soggy/too crispy, 10 = perfection)',
       key: 'skinConsistency',
     },
-    { name: 'meat (1 = overcooked/undercooked, 10 = juicy)', key: 'meat' },
+    { name: 'meat (0 = undercooked/overcooked, 10 = juicy)', key: 'meat' },
     {
-      name: "greasiness (1 = drippin', 10 = perfect amount)",
+      name: "greasiness (0 = drippin', 10 = perfect amount)",
       key: 'greasiness',
     },
     {
-      name: 'overall Taste (1 = poor, 10 = perfection)',
+      name: 'overall Taste (0 = poor, 10 = perfection)',
       key: 'overallTaste',
     },
   ];
@@ -247,14 +210,14 @@ const LocationCard = ({
               placeholder="Dipping Sauces/Etc."
               className="w-full"
             />
-            <Button
-              onClick={submitNotes}
-              className="mt-2 w-full bg-primary text-white"
-              disabled={submitting}
-            >
-              {submitting ? 'Submitting...' : 'Submit Notes'}
-            </Button>
           </div>
+          <Button
+            onClick={handleSubmit}
+            className="mt-2 w-full bg-primary text-white"
+            disabled={submitting}
+          >
+            {submitting ? 'Submitting...' : 'Submit'}
+          </Button>
         </>
       )}
     </div>

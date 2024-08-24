@@ -44,39 +44,23 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { locationId, userId, criterion, rating, beenThereBefore, notes } =
+    const { locationId, userId, ratings, beenThereBefore, notes } =
       await req.json();
 
-    if (
-      !userId ||
-      !locationId ||
-      (criterion &&
-        rating === undefined &&
-        beenThereBefore === undefined &&
-        notes === undefined)
-    ) {
+    if (!userId || !locationId || !ratings) {
       return NextResponse.json(
         {
-          message:
-            'Invalid request: missing userId, locationId, criterion, rating, beenThereBefore, or notes.',
+          message: 'Invalid request: missing userId, locationId, or ratings.',
         },
         { status: 400 },
       );
     }
 
-    const dataToUpdate: any = {};
-
-    if (criterion && rating !== undefined) {
-      dataToUpdate[criterion] = rating;
-    }
-
-    if (beenThereBefore !== undefined) {
-      dataToUpdate['beenThereBefore'] = beenThereBefore;
-    }
-
-    if (notes !== undefined) {
-      dataToUpdate['notes'] = notes;
-    }
+    const dataToUpdate = {
+      ...ratings,
+      beenThereBefore: beenThereBefore,
+      notes: notes,
+    };
 
     const existingRating = await prisma.locationRating.findFirst({
       where: {
@@ -95,16 +79,6 @@ export async function POST(req: NextRequest) {
         data: {
           userId,
           locationId,
-          appearance: 0,
-          aroma: 0,
-          sauceQuantity: 0,
-          spiceLevel: 0,
-          skinConsistency: 0,
-          meat: 0,
-          greasiness: 0,
-          overallTaste: 0,
-          beenThereBefore: beenThereBefore ?? false,
-          notes: notes ?? '',
           ...dataToUpdate,
         },
       });
